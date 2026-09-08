@@ -26,7 +26,6 @@ class RestaurantListCreateView(generics.ListCreateAPIView):
 class RestaurantDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     serializer_class = RestaurantSerializer
-
     permission_classes = [
         IsRestaurantOwner
     ]
