@@ -28,6 +28,7 @@ urlpatterns = [
     path("api/restaurants/",include("restaurants.urls")),
     path("api/menu/", include("menus.urls")),
     path("api/cart/",include("carts.urls")),
+    path("api/orders/",include("orders.urls")),
     path('api/auth/token/',TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/auth/token/refresh/',TokenRefreshView.as_view(), name='token_refresh'),
     
