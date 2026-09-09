@@ -31,6 +31,11 @@ class OrderSerializer(serializers.ModelSerializer):
         read_only=True,
     )
 
+    payment_id = serializers.IntegerField(
+    source="payment.id",
+    read_only=True,
+    )
+    
     class Meta:
         model = Order
 

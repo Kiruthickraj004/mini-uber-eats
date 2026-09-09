@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound
 
+from payments.models import Payment, PaymentStatus
 from carts.models import Cart
 from users.permissions import IsCustomer, IsRestaurantOwner
 
@@ -121,6 +122,12 @@ class CheckoutView(APIView):
                 order_items
             )
 
+            payment = Payment.objects.create(
+            order=order,
+            amount=subtotal,
+            currency="INR",
+            )
+
             cart.status = Cart.Status.CHECKED_OUT
 
             cart.save(
@@ -230,6 +237,17 @@ class AcceptOrderView(APIView):
                     },
                     status=status.HTTP_409_CONFLICT,
                 )
+            
+            payment = order.payment
+
+            if payment.status != PaymentStatus.SUCCESS:
+                return Response(
+                {
+                    "code": "PAYMENT_REQUIRED",
+                    "detail": "Order cannot be accepted until payment succeeds.",
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
 
             order.status = Order.Status.CONFIRMED
 
