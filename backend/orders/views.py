@@ -13,6 +13,9 @@ from users.permissions import IsCustomer, IsRestaurantOwner
 from .models import Order, OrderItem
 from .serializers import OrderSerializer
 
+from config.events import dispatch
+from .events import OrderReady
+
 
 class CheckoutView(APIView):
 
@@ -392,6 +395,10 @@ class MarkOrderReadyView(APIView):
                     "status",
                     "updated_at",
                 ]
+            )
+
+            transaction.on_commit(
+                lambda:dispatch(OrderReady(order_id=order.id))
             )
 
         return Response(
