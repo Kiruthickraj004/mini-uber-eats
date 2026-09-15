@@ -180,23 +180,39 @@ CELERY_RESULT_BACKEND = os.getenv(
     "redis://localhost:6379/1",
 )
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-
-EMAIL_HOST = os.getenv(
-    "EMAIL_HOST",
-    "localhost",
-)
-
-EMAIL_PORT = int(
-    os.getenv(
-        "EMAIL_PORT",
-        "1025",
-    )
-)
-
-EMAIL_USE_TLS = False
-
 DEFAULT_FROM_EMAIL = os.getenv(
     "DEFAULT_FROM_EMAIL",
     "no-reply@mini-uber-eats.local",
 )
+
+CELERY_BEAT_SCHEDULE = {
+    "check-stuck-notifications": {
+        "task": "notifications.tasks.check_stuck_notifications",
+        "schedule": 60.0,
+    },
+    "abandon-stale-carts": {
+        "task": "carts.tasks.abandon_stale_carts",
+        "schedule": 600.0,
+    },
+    "process-outbox-events": {
+    "task": "orders.tasks.process_outbox_events",
+    "schedule": 30.0,
+    },
+    "recover-stuck-outbox-events": {
+    "task": "orders.tasks.recover_stuck_outbox_events",
+    "schedule": 60.0,
+    },
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.getenv(
+            "REDIS_CACHE_URL",
+            "redis://localhost:6379/2",
+        ),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    },
+}

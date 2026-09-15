@@ -10,7 +10,7 @@ from payments.models import Payment, PaymentStatus
 from carts.models import Cart
 from users.permissions import IsCustomer, IsRestaurantOwner
 
-from .models import Order, OrderItem
+from .models import Order, OrderItem, OutboxEvent
 from .serializers import OrderSerializer
 
 from config.events import dispatch
@@ -397,8 +397,11 @@ class MarkOrderReadyView(APIView):
                 ]
             )
 
-            transaction.on_commit(
-                lambda:dispatch(OrderReady(order_id=order.id))
+            OutboxEvent.objects.create(
+                event_type="ORDER_READY",
+                payload={
+                    "order_id": order.id,
+                },
             )
 
         return Response(

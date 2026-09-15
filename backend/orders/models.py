@@ -87,3 +87,44 @@ class OrderItem(models.Model):
             f"{self.name_snapshot} "
             f"x {self.quantity}"
         )
+
+
+
+class OutboxEvent(models.Model):
+    class EventType(models.TextChoices):
+        ORDER_READY = "ORDER_READY", "Order Ready"
+    
+    class Status(models.TextChoices):
+        PENDING = "PENDING", "Pending"
+        PROCESSING = "PROCESSING", "Processing"
+        PROCESSED = "PROCESSED", "Processed"
+        FAILED = "FAILED", "Failed"
+
+    event_type = models.CharField(
+    max_length=100,
+    choices=EventType.choices,
+    )
+
+    payload = models.JSONField()
+
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.PENDING,
+    )
+
+    attempts = models.PositiveIntegerField(default=0)
+
+    last_error = models.TextField(blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    processed_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["created_at"]

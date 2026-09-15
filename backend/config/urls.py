@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path,include
 from importlib import import_module
 
+from users.views import RateLimitedTokenObtainPairView
+
 simplejwt_views = import_module('rest_framework_simplejwt.views')
 TokenObtainPairView = simplejwt_views.TokenObtainPairView
 TokenRefreshView = simplejwt_views.TokenRefreshView
@@ -31,7 +33,7 @@ urlpatterns = [
     path("api/orders/",include("orders.urls")),
     path("api/payments/", include("payments.urls")),
     path("api/delivery/", include("delivery.urls")),
-    path('api/auth/token/',TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/auth/token/',RateLimitedTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/auth/token/refresh/',TokenRefreshView.as_view(), name='token_refresh'),
     
 ]

@@ -1,11 +1,10 @@
-from django.shortcuts import get_object_or_404
 from django.db import IntegrityError, transaction
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from config.rate_limit import is_rate_limited
 from .models import Payment,PaymentAttempt,PaymentStatus
 from .serializers import PaymentSerializer
 
@@ -36,6 +35,43 @@ class PaymentConfirmView(APIView):
                     "detail": "Idempotency-Key header is required.",
                 },
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # First verify that this payment belongs to the authenticated user.
+        payment = (
+            Payment.objects
+            .select_related("order")
+            .filter(
+                pk=pk,
+                order__customer=request.user,
+            )
+            .first()
+        )
+
+        if payment is None:
+            return Response(
+                {
+                    "code": "PAYMENT_NOT_FOUND",
+                    "detail": "Payment not found.",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Rate limit this specific customer's confirmation attempts
+        # for this specific payment.
+        key = f"rate:payment-confirm:{request.user.id}:{payment.id}"
+
+        if is_rate_limited(
+            key=key,
+            limit=5,
+            window=60,
+        ):
+            return Response(
+                {
+                    "code": "RATE_LIMITED",
+                    "detail": "Too many payment confirmation attempts. Try again later.",
+                },
+                status=status.HTTP_429_TOO_MANY_REQUESTS,
             )
 
         try:
