@@ -2,7 +2,7 @@ import {BrowserRouter,Routes,Route,} from "react-router-dom";
 import Navbar from "./components/Navbar";
 import RoleRoute from "./components/RoleRoute";
 import Login from "./pages/Login";
-import Restaurants from "./pages/Restaurants";
+import Restaurants from "./pages/Restaurant";
 import RestaurantMenu from "./pages/RestaurantMenu";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";

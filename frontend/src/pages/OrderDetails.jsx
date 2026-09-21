@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import { getOrder } from "../api/orders";
-import { confirmPayment } from "../api/payments";
+import { confirmPayment } from "../api/payment";
 
 export default function OrderDetails() {
   const { orderId } = useParams();

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { getRestaurants } from "../api/restaurants";
+import { getRestaurants } from "../api/restaurant";
 
 export default function Restaurants() {
   const [restaurants, setRestaurants] = useState([]);

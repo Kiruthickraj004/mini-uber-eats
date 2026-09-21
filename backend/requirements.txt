@@ -1,0 +1,10 @@
+Django
+djangorestframework
+djangorestframework-simplejwt
+psycopg[binary]
+django-cors-headers
+django-redis
+celery
+redis
+flower
+python-dotenv

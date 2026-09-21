@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: kira@004
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -26,5 +26,84 @@ services:
       - "1025:1025"
       - "8025:8025"
 
+  backend:
+    build:
+      context: ./backend
+    container_name: mini-uber-eats-backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+      - mailpit
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: mini-uber-eats-frontend
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    
+
+  celery_worker:
+    build:
+      context: ./backend
+    container_name: mini-uber-eats-celery-worker
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/app
+    command: >
+      celery -A config worker
+      --loglevel=info
+    depends_on:
+      - backend
+      - redis
+
+  celery_beat:
+    build:
+      context: ./backend
+    container_name: mini-uber-eats-celery-beat
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/app
+    command: >
+      celery -A config beat
+      --loglevel=info
+    depends_on:
+      - backend
+      - redis
+
+  flower:
+    image: mher/flower:latest
+    container_name: mini-uber-eats-flower
+    restart: unless-stopped
+    command:
+      - celery
+      - flower
+      - --broker=redis://redis:6379/0
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+
 volumes:
   postgres_data:
+
+   
