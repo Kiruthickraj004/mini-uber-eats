@@ -56,7 +56,7 @@ class CheckoutView(APIView):
                         "error": "EMPTY_CART",
                         "message": "Your cart is empty.",
                     },
-                    status=status.HTTP_409_CONFLICT,
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
 
             if cart.restaurant.status != cart.restaurant.Status.OPEN:

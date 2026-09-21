@@ -15,6 +15,11 @@ urlpatterns = [
     path(
         "checkout/",
         CheckoutView.as_view(),
+        name="order-checkout",
+    ),
+    path(
+        "checkout/",
+        CheckoutView.as_view(),
         name="checkout",
     ),
 

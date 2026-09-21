@@ -32,10 +32,10 @@ class OrderSerializer(serializers.ModelSerializer):
     )
 
     payment_id = serializers.IntegerField(
-    source="payment.id",
-    read_only=True,
+        source="payment.id",
+        read_only=True,
     )
-    
+
     class Meta:
         model = Order
 
@@ -46,6 +46,7 @@ class OrderSerializer(serializers.ModelSerializer):
             "status",
             "subtotal",
             "items",
+            "payment_id",
             "created_at",
             "updated_at",
         ]

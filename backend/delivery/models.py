@@ -9,6 +9,8 @@ class DriverStatus(models.TextChoices):
 
 
 class DriverProfile(models.Model):
+    Status = DriverStatus
+
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
@@ -46,6 +48,8 @@ class DeliveryStatus(models.TextChoices):
 
 
 class Delivery(models.Model):
+    Status = DeliveryStatus
+
     order = models.OneToOneField(
         Order,
         on_delete=models.PROTECT,

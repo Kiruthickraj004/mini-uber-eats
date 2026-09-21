@@ -5,12 +5,14 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 
 from users.models import User
+from users.permissions import IsDriver
 from orders.models import Order
 
 from .models import DriverProfile, DriverStatus, Delivery, DeliveryStatus
-from .serializers import DriverProfileSerializer
+from .serializers import DriverProfileSerializer, DriverAvailableOrderSerializer, DeliverySerializer
 
 
 class DriverProfileView(APIView):
@@ -375,3 +377,44 @@ class CompleteDeliveryView(APIView):
                 "status": delivery.status,
                 "delivered_at": delivery.delivered_at,
             })
+
+
+
+class AvailableOrdersView(ListAPIView):
+    serializer_class = DriverAvailableOrderSerializer
+    permission_classes = [
+        IsAuthenticated,
+        IsDriver,
+    ]
+
+    def get_queryset(self):
+        return (
+            Order.objects
+            .select_related("restaurant")
+            .filter(
+                status=Order.Status.READY,
+            )
+            .order_by("created_at")
+        )
+
+
+class MyDeliveriesView(ListAPIView):
+    serializer_class = DeliverySerializer
+    permission_classes = [
+        IsAuthenticated,
+        IsDriver,
+    ]
+
+    def get_queryset(self):
+        return (
+            Delivery.objects
+            .select_related(
+                "order",
+                "order__restaurant",
+                "driver",
+            )
+            .filter(
+                driver__user=self.request.user,
+            )
+            .order_by("-assigned_at")
+        )
