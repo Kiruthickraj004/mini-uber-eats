@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/protectedRoutes";
 import RoleRoute from "./components/RoleRoute";
 import Home from "./pages/Home";
+import Register from "./pages/Register"
 import Login from "./pages/Login";
 import Restaurants from "./pages/Restaurant";
 import RestaurantMenu from "./pages/RestaurantMenu";
@@ -19,7 +20,7 @@ export default function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-
+        <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
 
         <Route path="/restaurants" element={<Restaurants />} />

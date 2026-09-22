@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link,useLocation,useNavigate } from "react-router-dom";
 
 import { useAuth } from "../context/authContext";
 
 export default function Login() {
   const { signIn } = useAuth();
   const navigate = useNavigate();
-
+  const location = useLocation();
+  const registrationMessage = location.state?.message;
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -39,7 +40,7 @@ export default function Login() {
   return (
     <div>
       <h1>Login</h1>
-
+      {registrationMessage && <p>{registrationMessage}</p>}
       <form onSubmit={handleSubmit}>
         <div>
           <label>
@@ -82,6 +83,7 @@ export default function Login() {
           {loading ? "Logging in..." : "Login"}
         </button>
       </form>
+      <p>Don't have an account?{" "}<Link to="/register">Create an account</Link></p>
     </div>
   );
 }
