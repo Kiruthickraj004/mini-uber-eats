@@ -54,12 +54,34 @@ class DriverAvailableOrderSerializer(serializers.ModelSerializer):
 
 
 class DeliverySerializer(serializers.ModelSerializer):
+    order_id = serializers.IntegerField(
+        source="order.id",
+        read_only=True,
+    )
+
+    driver_id = serializers.IntegerField(
+        source="driver.id",
+        read_only=True,
+    )
+
+    driver_name = serializers.SerializerMethodField()
+
+    def get_driver_name(self, obj):
+        user = getattr(obj.driver, "user", None)
+        if user is None:
+            return None
+
+        return getattr(user, "username", None) or user.email
+
     class Meta:
         model = Delivery
         fields = [
             "id",
             "order",
+            "order_id",
             "driver",
+            "driver_id",
+            "driver_name",
             "status",
             "assigned_at",
             "picked_up_at",
@@ -69,7 +91,10 @@ class DeliverySerializer(serializers.ModelSerializer):
         read_only_fields = [
             "id",
             "order",
+            "order_id",
             "driver",
+            "driver_id",
+            "driver_name",
             "status",
             "assigned_at",
             "picked_up_at",

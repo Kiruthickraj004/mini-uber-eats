@@ -49,6 +49,25 @@ class Order(models.Model):
         auto_now=True,
     )
 
+    @property
+    def assigned_driver(self):
+        delivery = getattr(self, "delivery", None)
+        if delivery is None:
+            return None
+        return delivery.driver
+
+    @property
+    def assigned_driver_name(self):
+        driver = self.assigned_driver
+        if driver is None:
+            return None
+
+        user = getattr(driver, "user", None)
+        if user is None:
+            return None
+
+        return getattr(user, "username", None) or user.email
+
     def __str__(self):
         return f"Order #{self.id}"
 

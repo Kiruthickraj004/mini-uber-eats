@@ -171,6 +171,8 @@ class RestaurantOrderListView(
             .select_related(
                 "restaurant",
                 "customer",
+                "payment",
+                "delivery__driver__user",
             )
             .prefetch_related("items")
             .order_by("-created_at")
@@ -190,10 +192,40 @@ class CustomerOrderListView(
                 customer=self.request.user
             )
             .select_related(
-                "restaurant"
+                "restaurant",
+                "payment",
+                "delivery__driver__user",
             )
             .prefetch_related("items")
             .order_by("-created_at")
+        )
+
+
+class CustomerOrderDetailView(APIView):
+
+    permission_classes = [IsCustomer]
+
+    def get(self, request, pk):
+        order = (
+            Order.objects
+            .select_related(
+                "restaurant",
+                "payment",
+                "delivery__driver__user",
+            )
+            .prefetch_related("items")
+            .filter(
+                id=pk,
+                customer=request.user,
+            )
+            .first()
+        )
+
+        if order is None:
+            raise NotFound("Order not found.")
+
+        return Response(
+            OrderSerializer(order).data
         )
 
 def get_restaurant_order(order_id, user):

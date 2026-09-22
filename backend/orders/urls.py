@@ -3,6 +3,7 @@ from django.urls import path
 from .views import (
     AcceptOrderView,
     CheckoutView,
+    CustomerOrderDetailView,
     CustomerOrderListView,
     MarkOrderReadyView,
     RejectOrderView,
@@ -27,6 +28,12 @@ urlpatterns = [
         "",
         CustomerOrderListView.as_view(),
         name="customer-orders",
+    ),
+
+    path(
+        "<int:pk>/",
+        CustomerOrderDetailView.as_view(),
+        name="customer-order-detail",
     ),
 
     path(

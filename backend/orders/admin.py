@@ -22,6 +22,7 @@ class OrderAdmin(admin.ModelAdmin):
         "customer",
         "restaurant",
         "status",
+        "assigned_driver_name",
         "subtotal",
         "created_at",
         "updated_at",
@@ -44,6 +45,7 @@ class OrderAdmin(admin.ModelAdmin):
     readonly_fields = (
         "customer",
         "restaurant",
+        "assigned_driver_name",
         "subtotal",
         "created_at",
         "updated_at",

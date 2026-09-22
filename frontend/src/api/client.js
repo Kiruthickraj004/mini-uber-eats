@@ -95,11 +95,25 @@ async function request(
     }
   }
 
-  const data = await response.json();
+  const responseText = await response.text();
+  let data = {};
+
+  if (responseText) {
+    try {
+      data = JSON.parse(responseText);
+    } catch {
+      data = {
+        detail:
+          "The server returned an unexpected response.",
+      };
+    }
+  }
 
   if (!response.ok) {
     throw new Error(
       data.detail ||
+        data.message ||
+        data.error ||
         "Something went wrong"
     );
   }

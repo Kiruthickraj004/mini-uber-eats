@@ -145,6 +145,37 @@ class CheckoutTests(APITestCase):
             Cart.Status.CHECKED_OUT,
         )
 
+    def test_customer_can_fetch_order_detail(self):
+        self.client.post(self.checkout_url)
+
+        order = Order.objects.get(
+            customer=self.customer
+        )
+
+        url = reverse(
+            "customer-order-detail",
+            kwargs={"pk": order.pk},
+        )
+
+        response = self.client.get(url)
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
+        self.assertEqual(
+            response.data["id"],
+            order.id,
+        )
+        self.assertEqual(
+            response.data["restaurant_name"],
+            self.restaurant.name,
+        )
+        self.assertEqual(
+            response.data["payment"]["id"],
+            order.payment.id,
+        )
+
     def test_checkout_rejects_empty_cart(self):
         CartItem.objects.all().delete()
 

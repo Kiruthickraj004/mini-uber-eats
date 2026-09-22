@@ -37,12 +37,21 @@ class DeliveryAdmin(admin.ModelAdmin):
         "id",
         "order",
         "driver",
+        "driver_name",
         "status",
         "assigned_at",
         "picked_up_at",
         "delivered_at",
         "updated_at",
     )
+
+    def driver_name(self, obj):
+        user = getattr(obj.driver, "user", None)
+        if user is None:
+            return "-"
+        return getattr(user, "username", None) or user.email
+
+    driver_name.short_description = "Driver"
 
     list_filter = (
         "status",

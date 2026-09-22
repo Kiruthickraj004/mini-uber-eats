@@ -33,9 +33,17 @@ export default function OrderDetails() {
       setError("");
 
       const idempotencyKey = crypto.randomUUID();
+      const paymentId =
+        order?.payment?.id ?? order?.payment_id;
+
+      if (!paymentId) {
+        throw new Error(
+          "Payment information is not available for this order."
+        );
+      }
 
       await confirmPayment(
-        order.payment.id,
+        paymentId,
         idempotencyKey
       );
 
