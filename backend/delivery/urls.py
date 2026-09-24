@@ -4,7 +4,7 @@ from .views import AvailableOrdersView, CompleteDeliveryView, DriverProfileView,
 
 
 urlpatterns = [
-    path("profile/", DriverProfileView.as_view()),
+    path("profile/", DriverProfileView.as_view(), name="driver-profile"),
     path("orders/<int:order_id>/claim/", ClaimDeliveryView.as_view(), name="delivery-claim-order"),
     path("<int:delivery_id>/pickup/", PickupDeliveryView.as_view()),
     path("<int:delivery_id>/complete/",CompleteDeliveryView.as_view()),

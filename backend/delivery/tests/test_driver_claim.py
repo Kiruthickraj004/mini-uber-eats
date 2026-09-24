@@ -83,6 +83,25 @@ class DriverClaimConcurrencyTests(
 
         return client.post(url)
 
+    def test_driver_profile_is_created_when_missing(self):
+        driver_user = User.objects.create_user(
+            username="driver_missing",
+            email="driver_missing@example.com",
+            password=self.password,
+            role=User.Role.DRIVER,
+        )
+
+        client = APIClient()
+        client.force_authenticate(user=driver_user)
+
+        response = client.get(reverse("driver-profile"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(
+            DriverProfile.objects.filter(user=driver_user).exists()
+        )
+        self.assertEqual(response.data["user_id"], driver_user.id)
+
     def test_only_one_driver_can_claim_order(self):
         with ThreadPoolExecutor(
             max_workers=3

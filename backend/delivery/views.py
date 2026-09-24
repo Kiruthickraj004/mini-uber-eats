@@ -15,6 +15,19 @@ from .models import DriverProfile, DriverStatus, Delivery, DeliveryStatus
 from .serializers import DriverProfileSerializer, DriverAvailableOrderSerializer, DeliverySerializer
 
 
+def get_or_create_driver_profile(user):
+    if user.role != User.Role.DRIVER:
+        return None
+
+    return DriverProfile.objects.get_or_create(
+        user=user,
+        defaults={
+            "status": DriverStatus.OFFLINE,
+            "vehicle_type": "",
+        },
+    )[0]
+
+
 class DriverProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -28,18 +41,7 @@ class DriverProfileView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        profile = DriverProfile.objects.filter(
-            user=request.user
-        ).first()
-
-        if profile is None:
-            return Response(
-                {
-                    "code": "DRIVER_PROFILE_NOT_FOUND",
-                    "detail": "Driver profile does not exist.",
-                },
-                status=status.HTTP_404_NOT_FOUND,
-            )
+        profile = get_or_create_driver_profile(request.user)
 
         return Response(
             DriverProfileSerializer(profile).data
@@ -98,18 +100,7 @@ class DriverProfileView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        profile = DriverProfile.objects.filter(
-            user=request.user
-        ).first()
-
-        if profile is None:
-            return Response(
-                {
-                    "code": "DRIVER_PROFILE_NOT_FOUND",
-                    "detail": "Driver profile does not exist.",
-                },
-                status=status.HTTP_404_NOT_FOUND,
-            )
+        profile = get_or_create_driver_profile(request.user)
 
         serializer = DriverProfileSerializer(
             profile,
@@ -128,7 +119,7 @@ class ClaimDeliveryView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, order_id):
-        if not hasattr(request.user, "driver_profile"):
+        if request.user.role != User.Role.DRIVER:
             return Response(
                 {
                     "code": "DRIVER_ONLY",
@@ -136,6 +127,8 @@ class ClaimDeliveryView(APIView):
                 },
                 status=status.HTTP_403_FORBIDDEN,
             )
+
+        profile = get_or_create_driver_profile(request.user)
 
         try:
             with transaction.atomic():
@@ -173,13 +166,7 @@ class ClaimDeliveryView(APIView):
                 )
 
                 if driver is None:
-                    return Response(
-                        {
-                            "code": "DRIVER_PROFILE_NOT_FOUND",
-                            "detail": "Driver profile not found.",
-                        },
-                        status=status.HTTP_404_NOT_FOUND,
-                    )
+                    driver = profile
 
                 if driver.status != DriverStatus.AVAILABLE:
                     return Response(

@@ -14,7 +14,8 @@ async function refreshAccessToken() {
   const refreshToken = getRefreshToken();
 
   if (!refreshToken) {
-    throw new Error("No refresh token available");
+    clearTokens();
+    throw new Error("Your session has expired. Please log in again.");
   }
 
   const response = await fetch(
@@ -34,7 +35,7 @@ async function refreshAccessToken() {
     clearTokens();
 
     throw new Error(
-      "Session expired. Please login again."
+      "Your session has expired. Please log in again."
     );
   }
 
@@ -71,9 +72,12 @@ async function request(
     }
   );
 
+  const isAuthEndpoint = path.startsWith("/auth/");
+
   if (
     response.status === 401 &&
-    retry
+    retry &&
+    !isAuthEndpoint
   ) {
     if (!refreshPromise) {
       refreshPromise = refreshAccessToken()
@@ -110,12 +114,14 @@ async function request(
   }
 
   if (!response.ok) {
-    throw new Error(
+    const message =
       data.detail ||
-        data.message ||
-        data.error ||
-        "Something went wrong"
-    );
+      data.message ||
+      data.error ||
+      data.non_field_errors?.[0] ||
+      "Something went wrong";
+
+    throw new Error(message);
   }
 
   return data;
