@@ -8,11 +8,13 @@ export default function Orders() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const safeOrders = Array.isArray(orders) ? orders : [];
+
   useEffect(() => {
     async function loadOrders() {
       try {
         const data = await getOrders();
-        setOrders(data);
+        setOrders(Array.isArray(data) ? data : []);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -50,9 +52,9 @@ export default function Orders() {
         <p className="mt-2 text-slate-600">Track your latest orders.</p>
       </div>
 
-      {orders.length === 0 ? (
+      {safeOrders.length === 0 ? (
         <div className="rounded-[30px] border border-dashed border-slate-300 bg-white/80 p-8 text-center shadow-[0_18px_40px_rgba(15,23,42,0.04)]">
-          <p className="text-slate-600">You haven’t placed any orders yet.</p>
+          <p className="text-slate-600">No orders yet.</p>
           <div className="mt-5">
             <Link to="/restaurants" className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-brand-500 to-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-500/25 transition hover:-translate-y-0.5 hover:shadow-brand-500/35">
               Browse Restaurants
@@ -61,7 +63,7 @@ export default function Orders() {
         </div>
       ) : (
         <div className="space-y-4">
-          {orders.map((order) => (
+          {safeOrders.map((order) => (
             <div key={order.id} className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_18px_40px_rgba(15,23,42,0.06)]">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <h3 className="text-xl font-bold text-slate-900">Order #{order.id}</h3>

@@ -13,6 +13,8 @@ export default function Cart() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const cartItems = Array.isArray(cart?.items) ? cart.items : [];
+
   async function loadCart() {
     try {
       const data = await getCart();
@@ -75,7 +77,7 @@ export default function Cart() {
     );
   }
 
-  if (!cart || cart.items.length === 0) {
+  if (!cart || cartItems.length === 0) {
     return (
       <div className="mx-auto max-w-7xl px-4 py-10 md:px-6 lg:px-8">
         <div className="mx-auto max-w-lg rounded-[30px] border border-slate-200 bg-white p-8 shadow-[0_18px_40px_rgba(15,23,42,0.06)]">
@@ -99,7 +101,7 @@ export default function Cart() {
       </div>
 
       <div className="space-y-4">
-        {cart.items.map((item) => (
+        {cartItems.map((item) => (
           <div key={item.id} className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_18px_40px_rgba(15,23,42,0.06)]">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>

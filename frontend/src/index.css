@@ -1,31 +1,31 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-50: #fff6f0;
-  --color-brand-100: #ffe7d8;
-  --color-brand-200: #ffd0af;
-  --color-brand-300: #ffad75;
-  --color-brand-400: #ff8a4c;
-  --color-brand-500: #f26b3a;
-  --color-brand-600: #d9582d;
-  --color-brand-700: #a93e20;
-  --color-brand-800: #722b19;
-  --color-brand-900: #3b180f;
+  --color-brand-50: #fff7f3;
+  --color-brand-100: #ffe7dc;
+  --color-brand-200: #ffd1b7;
+  --color-brand-300: #ffb38d;
+  --color-brand-400: #ff8a62;
+  --color-brand-500: #f56b3c;
+  --color-brand-600: #df572d;
+  --color-brand-700: #b74a26;
+  --color-brand-800: #7d3319;
+  --color-brand-900: #431d12;
 
-  --color-ink-900: #1f2937;
-  --color-ink-800: #2c3a4a;
-  --color-ink-700: #425466;
-  --color-ink-500: #64748b;
+  --color-ink-900: #1e1b18;
+  --color-ink-800: #2d2a29;
+  --color-ink-700: #4b413d;
+  --color-ink-500: #756a65;
   --color-sand-50: #fffaf6;
-  --color-sand-100: #fdf1e8;
-  --color-sand-200: #f9e5d5;
-  --color-sand-300: #f3d0af;
+  --color-sand-100: #fef1ea;
+  --color-sand-200: #fbe1d6;
+  --color-sand-300: #f2c3a7;
 }
 
 :root {
   font-family: "Inter", "Segoe UI", sans-serif;
-  color: #111827;
-  background: #fffaf5;
+  color: #1f2937;
+  background: #fffaf6;
   line-height: 1.5;
   font-weight: 400;
   font-synthesis: none;
@@ -43,9 +43,10 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, rgba(16, 185, 129, 0.14), transparent 25%),
-    linear-gradient(180deg, #fffaf5 0%, #fff 52%, #f8fafc 100%);
-  color: #111827;
+    radial-gradient(circle at top left, rgba(245, 107, 60, 0.18), transparent 24%),
+    radial-gradient(circle at bottom right, rgba(255, 176, 122, 0.14), transparent 20%),
+    linear-gradient(180deg, #fffaf6 0%, #fffdfb 38%, #fff4ee 100%);
+  color: #1f2937;
 }
 
 #root {
@@ -63,6 +64,11 @@ button {
   cursor: pointer;
 }
 
+img {
+  max-width: 100%;
+  display: block;
+}
+
 ::selection {
-  background: rgba(16, 185, 129, 0.18);
+  background: rgba(245, 107, 60, 0.22);
 }
